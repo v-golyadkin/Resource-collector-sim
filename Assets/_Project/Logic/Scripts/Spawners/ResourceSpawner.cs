@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourceSpawner : MonoBehaviour
@@ -46,9 +45,26 @@ public class ResourceSpawner : MonoBehaviour
             Random.Range(-_spawnArea.y, _spawnArea.y)
             );
 
-        _factory.GetEntity().transform.position = spawnPosition;
+        var resource = _factory.GetEntity();
+
+        resource.transform.position = spawnPosition;
+
+        resource.OnCollected += () => ReleaseResource(resource);
+
+        //_factory.GetEntity().transform.position = spawnPosition;
+
+        //_factory.GetEntity().OnCollected += () => ReleaseResource(_factory.GetEntity());
 
         _spawnCount++;
+    }
+
+    private void ReleaseResource(Resource resource)
+    {
+        _factory.ReturnEntity(resource);
+
+        Debug.Log("Release Resource");
+
+        _spawnCount--;
     }
 
 #if UNITY_EDITOR
