@@ -409,10 +409,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _resourcePrefab: {fileID: 7379731068781584982, guid: 84766b73519de994c8046ceaf9ccefbc,
     type: 3}
-  _spawnDelay: 2
-  _poolSize: 10
-  _spawnArea: {x: 10, y: 10}
-  _spawnLimit: 15
+  _spawnDelay: 1
+  _poolSize: 5
+  _spawnArea: {x: 7, y: 7}
+  _spawnLimit: 5
 --- !u!4 &600159756
 Transform:
   m_ObjectHideFlags: 0
@@ -618,7 +618,7 @@ MonoBehaviour:
   _dronePrefab: {fileID: 1547362221414083980, guid: 478efa5622a552e40bec4fe9932c52f1,
     type: 3}
   _homeBase: {fileID: 1921588349}
-  _dronePerFaction: 3
+  _dronePerFaction: 2
   _factionColor: {r: 0, g: 0, b: 1, a: 0}
   _factionName: {fileID: 0}
 --- !u!65 &1921588346

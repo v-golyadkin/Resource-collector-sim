@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourceSpawner : MonoBehaviour
@@ -11,7 +12,8 @@ public class ResourceSpawner : MonoBehaviour
     [SerializeField] private int _spawnLimit;
 
     private IEntityFactory<Resource> _factory;
-    private int _spawnCount = 0;
+    private List<Resource> _activeResources = new List<Resource>();
+    private int _activeResourcesCount = 0;
 
     private void Start()
     {
@@ -21,6 +23,22 @@ public class ResourceSpawner : MonoBehaviour
         };
 
         StartCoroutine(SpawnRoutine());
+#if UNITY_EDITOR 
+        StartCoroutine(ResourceIntegrityCheck());
+#endif
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+
+        foreach(var resource in _activeResources)
+        {
+            if(resource != null)
+            {
+                resource.OnCollected -= () => HandleResourceCollected(resource);
+            }
+        }
     }
 
     private IEnumerator SpawnRoutine()
@@ -29,16 +47,15 @@ public class ResourceSpawner : MonoBehaviour
         {
             yield return new WaitForSeconds(_spawnDelay);
 
-            if(_spawnCount < _spawnLimit)
-            {
-                SpawnResource();
-            }
-                
+            TrySpawnRecource();
         }
     }
 
-    private void SpawnResource()
+    private void TrySpawnRecource()
     {
+        if(_activeResources.Count >= _spawnLimit) 
+            return;
+
         Vector3 spawnPosition = new Vector3(
             Random.Range(-_spawnArea.x, _spawnArea.x),
             0.5f,
@@ -47,26 +64,66 @@ public class ResourceSpawner : MonoBehaviour
 
         var resource = _factory.GetEntity();
 
-        resource.transform.position = spawnPosition;
+        SetupResource(resource, spawnPosition);
+    }
 
-        resource.OnCollected += () => ReleaseResource(resource);
+    private void SetupResource(Resource resource, Vector3 position)
+    {
+        resource.transform.position = position;
+        resource.ResetState();
 
-        //_factory.GetEntity().transform.position = spawnPosition;
+        resource.OnCollected -= () => HandleResourceCollected(resource);
+        resource.OnCollected += () => HandleResourceCollected(resource);
 
-        //_factory.GetEntity().OnCollected += () => ReleaseResource(_factory.GetEntity());
+        _activeResources.Add(resource);
+    }
 
-        _spawnCount++;
+    private void HandleResourceCollected(Resource resource)
+    {
+        if (resource == null && !_activeResources.Contains(resource))
+            return;
+
+        ReleaseResource(resource);
     }
 
     private void ReleaseResource(Resource resource)
     {
+        resource.OnCollected -= () => HandleResourceCollected(resource);
+        _activeResources.Remove(resource);
         _factory.ReturnEntity(resource);
 
         Debug.Log("Release Resource");
-
-        _spawnCount--;
     }
 
+#if UNITY_EDITOR
+    private IEnumerator ResourceIntegrityCheck()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(3f);
+
+            for (int i = _activeResources.Count - 1; i >= 0; i--)
+            {
+                var resource = _activeResources[i];
+
+                // ≈сли ресурс был уничтожен или деактивирован неправильно
+                if (resource == null || !resource.gameObject.activeSelf)
+                {
+                    Debug.LogWarning("Found orphaned resource, cleaning up");
+                    _activeResources.RemoveAt(i);
+                    continue;
+                }
+
+                // ≈сли ресурс помечен как собранный, но не обработан
+                if (resource.IsCollected)
+                {
+                    Debug.Log("Processing missed collected resource");
+                    ReleaseResource(resource);
+                }
+            }
+        }
+    }
+#endif
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

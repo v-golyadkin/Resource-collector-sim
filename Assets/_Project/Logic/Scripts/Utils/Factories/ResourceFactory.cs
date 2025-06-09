@@ -8,7 +8,7 @@ public class ResourceFactory : IEntityFactory<Resource>
 
     public ResourceFactory(GameObject prefab, Transform parent)
     {
-        _pool = new EntityPool<Resource>(prefab, parent, PoolSize);
+        _pool = new EntityPool<Resource>(prefab, parent, PoolSize, false);
     }
 
     public Resource GetEntity(Transform spawnPoint = null)

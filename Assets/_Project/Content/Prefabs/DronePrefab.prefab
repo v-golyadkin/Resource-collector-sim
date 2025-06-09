@@ -127,6 +127,11 @@ MonoBehaviour:
   _targetResource: {fileID: 0}
   _resourceCollected: 0
   _findResourceRadius: 50
+  _avoidDistance: 3
+  _avoidForce: 2
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!54 &2208091079557308681
 Rigidbody:
   m_ObjectHideFlags: 0

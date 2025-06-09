@@ -5,6 +5,7 @@ using Random = UnityEngine.Random;
 
 public enum DroneState { Searching, MovingToResource, Collecting, ReturningToBase }
 
+
 public class Drone : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 5f;
@@ -39,6 +40,7 @@ public class Drone : MonoBehaviour
                 CollectResource();
                 break;
             case DroneState.ReturningToBase:
+                StopAllCoroutines();
                 MoveTo(_homeBase.transform.position);
                 break;
         }
@@ -62,8 +64,7 @@ public class Drone : MonoBehaviour
             Resource resource = collider.GetComponent<Resource>();
             if (resource != null && resource.TryToClaim())
             {
-                _targetResource = resource;
-                SetState(DroneState.MovingToResource);
+                ClaimResource(resource);
                 return;
             }
         }
@@ -77,6 +78,12 @@ public class Drone : MonoBehaviour
             ).normalized;
             transform.position += randomDir * _moveSpeed * Time.deltaTime;
         }
+    }
+
+    private void ClaimResource(Resource resource)
+    {
+        _targetResource = resource;
+        SetState(DroneState.MovingToResource);
     }
 
     private void MoveTo(Vector3 targetPosition)
@@ -102,19 +109,25 @@ public class Drone : MonoBehaviour
 
     private void DeliverResource()
     {
-        throw new NotImplementedException();
+        
     }
 
     private void CollectResource()
     {
         StartCoroutine(CollectResourceRoutine());
+
+        
     }
 
     private IEnumerator CollectResourceRoutine()
     {
         yield return new WaitForSeconds(_collectionTime);
 
-        _targetResource.OnResourceCollected();
+        if(_targetResource != null && _targetResource.gameObject.activeInHierarchy)
+        {
+            _targetResource.Collect();
+        }
+        
 
         SetState(DroneState.ReturningToBase);
     }

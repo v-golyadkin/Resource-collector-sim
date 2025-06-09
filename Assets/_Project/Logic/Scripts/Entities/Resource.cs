@@ -3,33 +3,54 @@ using UnityEngine;
 
 public class Resource : MonoBehaviour
 {
-    public bool IsCollected {  get; private set; }
+    public bool IsCollected { get; private set; }
+    public bool IsMarked { get; private set; }
 
     public event Action OnCollected;
 
-    public void OnResourceCollected()
+    private void OnEnable()
     {
+        ResetState();
+    }
+
+    private void OnDisable()
+    {
+        OnCollected = null;
+    }
+
+    public void Initialize()
+    {
+        IsCollected = false;
+        IsMarked = false;
+    }
+
+    public void Collect()
+    {
+        if (IsCollected || !gameObject.activeInHierarchy) 
+            return;
+        
+        IsCollected = true;
         OnCollected?.Invoke();
     }
 
     public void MarkAsCollected()
     {
-        IsCollected = true;
+        IsMarked = true;
+        //IsCollected = false;
     }
 
     public void ResetState()
     {
         IsCollected = false;
+        IsMarked = false;
     }
 
     public bool TryToClaim()
     {
-        if (IsCollected)
-        {
-            return false;
-        }
+        if (IsMarked) return false;
 
         MarkAsCollected();
+        //IsCollected = true;
         return true;
     }
 }
