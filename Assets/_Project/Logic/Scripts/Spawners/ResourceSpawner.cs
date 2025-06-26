@@ -24,7 +24,7 @@ public class ResourceSpawner : MonoBehaviour
 
         StartCoroutine(SpawnRoutine());
 #if UNITY_EDITOR 
-        StartCoroutine(ResourceIntegrityCheck());
+        //StartCoroutine(ResourceIntegrityCheck());
 #endif
     }
 
@@ -92,7 +92,7 @@ public class ResourceSpawner : MonoBehaviour
         _activeResources.Remove(resource);
         _factory.ReturnEntity(resource);
 
-        Debug.Log("Release Resource");
+        //Debug.Log("Release resource");
     }
 
 #if UNITY_EDITOR
@@ -106,7 +106,6 @@ public class ResourceSpawner : MonoBehaviour
             {
                 var resource = _activeResources[i];
 
-                // ≈сли ресурс был уничтожен или деактивирован неправильно
                 if (resource == null || !resource.gameObject.activeSelf)
                 {
                     Debug.LogWarning("Found orphaned resource, cleaning up");
@@ -114,7 +113,6 @@ public class ResourceSpawner : MonoBehaviour
                     continue;
                 }
 
-                // ≈сли ресурс помечен как собранный, но не обработан
                 if (resource.IsCollected)
                 {
                     Debug.Log("Processing missed collected resource");

@@ -18,10 +18,12 @@ public class Drone : MonoBehaviour
     [SerializeField] private float _findResourceRadius = 10f;
 
     private Transform _homeBase;
+    private Base _droneBase;
     private float _collectionTimer;
 
-    public void Initialize(Transform homeBase)
+    public void Initialize(Transform homeBase, Base droneBase)
     {
+        _droneBase = droneBase;
         _homeBase = homeBase;
         SetState(DroneState.Searching);
     }
@@ -41,7 +43,7 @@ public class Drone : MonoBehaviour
                 break;
             case DroneState.ReturningToBase:
                 StopAllCoroutines();
-                MoveTo(_homeBase.transform.position);
+                MoveTo(_droneBase.transform.position);
                 break;
         }
     }
@@ -103,20 +105,19 @@ public class Drone : MonoBehaviour
             else if(_currentState == DroneState.ReturningToBase)
             {
                 SetState(DroneState.Searching);
+                DeliverResource();
             }
         }
     }
 
     private void DeliverResource()
     {
-        
+        _droneBase.AddResource(1);
     }
 
     private void CollectResource()
     {
-        StartCoroutine(CollectResourceRoutine());
-
-        
+        StartCoroutine(CollectResourceRoutine());    
     }
 
     private IEnumerator CollectResourceRoutine()

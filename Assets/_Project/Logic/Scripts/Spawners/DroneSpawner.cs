@@ -6,6 +6,7 @@ public class DroneSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject _dronePrefab;
     [SerializeField] private Transform _homeBase;
+    [SerializeField] private Base _droneBase;
     [SerializeField] private int _dronePerFaction;
 
     [SerializeField] private Color _factionColor;
@@ -16,7 +17,7 @@ public class DroneSpawner : MonoBehaviour
 
     private void Start()
     {
-        _factory = new DroneFactory(_dronePrefab, _homeBase)
+        _factory = new DroneFactory(_dronePrefab, _droneBase, _homeBase)
         {
             PoolSize = _dronePerFaction
         };

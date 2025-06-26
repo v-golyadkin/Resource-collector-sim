@@ -7,10 +7,12 @@ public class DroneFactory : IEntityFactory<Drone>
     private EntityPool<Drone> _pool;
     private GameObject _prefab;
     private Transform _homeBase;
+    private Base _droneBase;
 
-    public DroneFactory(GameObject prefab, Transform homeBase)
+    public DroneFactory(GameObject prefab, Base droneBase, Transform homeBase)
     {
         _prefab = prefab;
+        _droneBase = droneBase;
         _homeBase = homeBase;
         _pool = new EntityPool<Drone>(prefab, homeBase, PoolSize);
     }
@@ -18,7 +20,7 @@ public class DroneFactory : IEntityFactory<Drone>
     public Drone GetEntity(Transform spawnPoint = null)
     {
         Drone drone = _pool.Get(spawnPoint);
-        drone.Initialize(_homeBase);
+        drone.Initialize(_homeBase, _droneBase);
         return drone;
     }
 
