@@ -688,7 +688,7 @@ MonoBehaviour:
     type: 3}
   _homeBase: {fileID: 1921588349}
   _droneBase: {fileID: 1921588350}
-  _dronePerFaction: 3
+  _dronePerFaction: 2
   _factionColor: {r: 0, g: 0, b: 1, a: 0}
   _factionName: {fileID: 0}
 --- !u!65 &1921588346
