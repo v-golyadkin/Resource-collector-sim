@@ -4,7 +4,10 @@ using UnityEngine.UI;
 
 public class DroneSpawner : MonoBehaviour
 {
+    [SerializeField] private DroneSpawnerConfigSO _droneSpawnerConfig;
+
     [SerializeField] private GameObject _dronePrefab;
+    [SerializeField] private DroneConfigSO _droneConfig;
     [SerializeField] private Transform _homeBase;
     [SerializeField] private Base _droneBase;
     [SerializeField] private int _dronePerFaction;
@@ -17,7 +20,7 @@ public class DroneSpawner : MonoBehaviour
 
     private void Start()
     {
-        _factory = new DroneFactory(_dronePrefab, _droneBase, _homeBase)
+        _factory = new DroneFactory(_dronePrefab, _droneBase, _droneConfig)
         {
             PoolSize = _dronePerFaction
         };
@@ -35,7 +38,7 @@ public class DroneSpawner : MonoBehaviour
 
     private Drone SpawnDrone()
     {
-        Drone drone = _factory.GetEntity(_homeBase);
+        Drone drone = _factory.GetEntity(_droneBase.transform);
         _drones.Add(drone);
         return drone;
     }
