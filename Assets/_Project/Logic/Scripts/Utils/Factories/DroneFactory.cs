@@ -6,16 +6,15 @@ public class DroneFactory : IEntityFactory<Drone>
 
     private EntityPool<Drone> _pool;
     private GameObject _prefab;
-    private Transform _homeBase;
     private Base _droneBase;
     private DroneConfigSO _droneConfig;
 
-    public DroneFactory(GameObject prefab, Base droneBase,  DroneConfigSO droneConfig)
+    public DroneFactory(DroneConfigSO droneConfig, Base droneBase)
     {
-        _prefab = prefab;
+        _prefab = droneConfig.dronePrefab;
         _droneBase = droneBase;
         _droneConfig = droneConfig;
-        _pool = new EntityPool<Drone>(prefab, droneBase.transform, PoolSize);
+        _pool = new EntityPool<Drone>(_prefab, droneBase.transform, PoolSize);
     }
 
     public Drone GetEntity(Transform spawnPoint = null)

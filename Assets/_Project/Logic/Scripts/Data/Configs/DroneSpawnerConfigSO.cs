@@ -6,6 +6,5 @@ using UnityEngine;
 public class DroneSpawnerConfigSO : ScriptableObject
 {
     [SerializeField] public DroneConfigSO droneConfig;
-    [SerializeField] public Base droneBase;
     [SerializeField] public int dronePerFaction;
 }

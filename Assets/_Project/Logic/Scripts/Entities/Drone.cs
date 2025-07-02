@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -11,12 +10,10 @@ public class Drone : MonoBehaviour
 {
     private DroneState _currentState;
     private Resource _targetResource;
-    private int _resourceCollected;
 
     private DroneConfigSO _config;
 
     private Base _droneBase;
-    private float _collectionTimer;
 
     public void Initialize(Base droneBase, DroneConfigSO droneConfig)
     {
@@ -116,21 +113,8 @@ public class Drone : MonoBehaviour
     private void CollectResource()
     {
         StartCoroutine(CollectResourceRoutine());
-
-        //CollectResourceAsync().Forget();
     }
 
-    private async UniTaskVoid CollectResourceAsync()
-    {
-        await UniTask.Delay(TimeSpan.FromSeconds(_config.collectTime));
-
-        if(_targetResource != null && _targetResource.gameObject.activeInHierarchy)
-        {
-            _targetResource.Collect();
-        }
-
-        SetState(DroneState.ReturningToBase);
-    }
 
     private IEnumerator CollectResourceRoutine()
     {

@@ -13,7 +13,6 @@ public class ResourceSpawner : MonoBehaviour
 
     private IEntityFactory<Resource> _factory;
     private List<Resource> _activeResources = new List<Resource>();
-    private int _activeResourcesCount = 0;
 
     private void Start()
     {
@@ -23,9 +22,6 @@ public class ResourceSpawner : MonoBehaviour
         };
 
         StartCoroutine(SpawnRoutine());
-#if UNITY_EDITOR 
-        //StartCoroutine(ResourceIntegrityCheck());
-#endif
     }
 
     private void OnDestroy()
@@ -95,33 +91,6 @@ public class ResourceSpawner : MonoBehaviour
         //Debug.Log("Release resource");
     }
 
-#if UNITY_EDITOR
-    private IEnumerator ResourceIntegrityCheck()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(3f);
-
-            for (int i = _activeResources.Count - 1; i >= 0; i--)
-            {
-                var resource = _activeResources[i];
-
-                if (resource == null || !resource.gameObject.activeSelf)
-                {
-                    Debug.LogWarning("Found orphaned resource, cleaning up");
-                    _activeResources.RemoveAt(i);
-                    continue;
-                }
-
-                if (resource.IsCollected)
-                {
-                    Debug.Log("Processing missed collected resource");
-                    ReleaseResource(resource);
-                }
-            }
-        }
-    }
-#endif
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
