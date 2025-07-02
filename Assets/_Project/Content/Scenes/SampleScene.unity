@@ -684,8 +684,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2edb8fe8d1cfaa4bb9372660f04c22e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _droneSpawnerConfig: {fileID: 11400000, guid: de0ba61a5b043bf4387a66e33760a91c,
+    type: 2}
   _dronePrefab: {fileID: 1547362221414083980, guid: 478efa5622a552e40bec4fe9932c52f1,
     type: 3}
+  _droneConfig: {fileID: 11400000, guid: e8bc26cf0da3ce44cb4faec6eb0e4d27, type: 2}
   _homeBase: {fileID: 1921588349}
   _droneBase: {fileID: 1921588350}
   _dronePerFaction: 2

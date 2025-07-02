@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -8,23 +7,18 @@ public enum DroneState { Searching, MovingToResource, Collecting, ReturningToBas
 
 public class Drone : MonoBehaviour
 {
-    [SerializeField] private float _moveSpeed = 5f;
-    [SerializeField] private float _collectionTime = 2f;
+    private DroneState _currentState;
+    private Resource _targetResource;
 
-    [SerializeField] private DroneState _currentState;
-    [SerializeField] private Resource _targetResource;
-    [SerializeField] private int _resourceCollected;
+    private DroneConfigSO _config;
 
-    [SerializeField] private float _findResourceRadius = 10f;
-
-    private Transform _homeBase;
     private Base _droneBase;
-    private float _collectionTimer;
 
-    public void Initialize(Transform homeBase, Base droneBase)
+    public void Initialize(Base droneBase, DroneConfigSO droneConfig)
     {
         _droneBase = droneBase;
-        _homeBase = homeBase;
+        _config = droneConfig;
+
         SetState(DroneState.Searching);
     }
 
@@ -57,7 +51,7 @@ public class Drone : MonoBehaviour
     {
         Collider[] nearbyResources = Physics.OverlapSphere(
             transform.position,
-            _findResourceRadius,
+            _config.findResourceRadius,
             LayerMask.GetMask("Resource")
             );
 
@@ -78,7 +72,7 @@ public class Drone : MonoBehaviour
                 0,
                 Random.Range(-1f, 1f)
             ).normalized;
-            transform.position += randomDir * _moveSpeed * Time.deltaTime;
+            transform.position += randomDir * _config.moveSpeed * Time.deltaTime;
         }
     }
 
@@ -93,7 +87,7 @@ public class Drone : MonoBehaviour
         transform.position = Vector3.MoveTowards(
             transform.position,
             targetPosition,
-            _moveSpeed * Time.deltaTime
+            _config.moveSpeed * Time.deltaTime
             );
 
         if(Vector3.Distance(transform.position, targetPosition) < 0.1f)
@@ -117,12 +111,13 @@ public class Drone : MonoBehaviour
 
     private void CollectResource()
     {
-        StartCoroutine(CollectResourceRoutine());    
+        StartCoroutine(CollectResourceRoutine());
     }
+
 
     private IEnumerator CollectResourceRoutine()
     {
-        yield return new WaitForSeconds(_collectionTime);
+        yield return new WaitForSeconds(_config.collectTime);
 
         if(_targetResource != null && _targetResource.gameObject.activeInHierarchy)
         {
